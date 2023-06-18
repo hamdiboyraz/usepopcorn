@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { logDOM } from "@testing-library/react";
 
 const tempMovieData = [
@@ -53,12 +53,14 @@ const average = (arr) =>
 
 const KEY = "e2af78d3";
 export default function App() {
-  const [movies, setMovies] = useState(tempMovieData);
-  const [watched, setWatched] = useState(tempWatchedData);
+  const [movies, setMovies] = useState([]);
+  const [watched, setWatched] = useState([]);
 
-  fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=interstellar`)
-    .then((res) => res.json())
-    .then((data) => console.log(data)); // Don't set here!! This is side-effect and causes inf loop
+  useEffect(function () {
+    fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=interstellar`)
+      .then((res) => res.json())
+      .then((data) => setMovies(data.Search));
+  }, []);
 
   return (
     <>
