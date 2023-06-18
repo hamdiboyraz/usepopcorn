@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { logDOM } from "@testing-library/react";
 
 const tempMovieData = [
   {
@@ -56,20 +55,35 @@ export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const query = "interstellar";
+  const [error, setError] = useState("");
+  const query = "sdf";
 
   useEffect(function () {
     async function fetchMovies() {
-      setIsLoading(true);
-      const res = await fetch(
-        `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
-      );
-      const data = await res.json();
-      setMovies(data.Search);
-      setTimeout(() => {
+      try {
+        setIsLoading(true);
+        const res = await fetch(
+          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+        );
+        if (!res.ok)
+          throw new Error("Something went wrong with fetching movies");
+
+        const data = await res.json();
+
+        // console.log(data);
+        if (data.Response === "False") throw new Error(data.Error);
+
+        setMovies(data.Search);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 2000);
+        console.log(data.Search);
+      } catch (err) {
+        console.log(err.message);
+        setError(err.message);
+      } finally {
         setIsLoading(false);
-      }, 2000);
-      console.log(data.Search);
+      }
     }
 
     fetchMovies();
@@ -82,13 +96,27 @@ export default function App() {
         <NumResults movies={movies} />
       </Navbar>
       <Main>
-        <Box>{isLoading ? <Loader /> : <MovieList movies={movies} />}</Box>
+        {/*<Box>{isLoading ? <Loader /> : <MovieList movies={movies} />}</Box>*/}
+        <Box>
+          {isLoading && <Loader />}
+          {!isLoading && !error && <MovieList movies={movies} />}
+          {error && <ErrorMessage message={error} />}
+        </Box>
         <Box>
           <WatchedSummary watched={watched} />
           <WatchedMovieList watched={watched} />
         </Box>
       </Main>
     </>
+  );
+}
+
+function ErrorMessage({ message }) {
+  return (
+    <p className="error">
+      <span>⛔️</span>
+      {message}
+    </p>
   );
 }
 
