@@ -56,43 +56,80 @@ export default function App() {
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const query = "sdf";
+  const [query, setQuery] = useState("interstellar");
+  const tempQuery = "oblivion";
+  /*
 
   useEffect(function () {
-    async function fetchMovies() {
-      try {
-        setIsLoading(true);
-        const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
-        );
-        if (!res.ok)
-          throw new Error("Something went wrong with fetching movies");
-
-        const data = await res.json();
-
-        // console.log(data);
-        if (data.Response === "False") throw new Error(data.Error);
-
-        setMovies(data.Search);
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 2000);
-        console.log(data.Search);
-      } catch (err) {
-        console.log(err.message);
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchMovies();
+    console.log("After initial render");
   }, []);
+
+  useEffect(function () {
+    console.log("After every render");
+  });
+
+  useEffect(
+    function () {
+      console.log("D");
+    },
+    [query]
+  );
+
+  console.log("During render");
+*/
+
+  console.log("render");
+  useEffect(
+    function () {
+      console.log("effect");
+      async function fetchMovies() {
+        try {
+          setIsLoading(true);
+          setError("");
+          const res = await fetch(
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+          );
+          if (!res.ok)
+            throw new Error("Something went wrong with fetching movies");
+
+          const data = await res.json();
+
+          // console.log(data);
+          if (data.Response === "False") throw new Error(data.Error);
+
+          setMovies(data.Search);
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 2000);
+          // console.log(data.Search);
+        } catch (err) {
+          console.log(err.message);
+          setError(err.message);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+
+      /*      if (!query.length) {
+        setMovies([]);
+        setError("");
+        return;
+      }*/
+      if (query.length < 3) {
+        setMovies([]);
+        setError("Please type movie");
+        return;
+      }
+
+      fetchMovies();
+    },
+    [query]
+  );
 
   return (
     <>
       <Navbar>
-        <Search />
+        <Search query={query} setQuery={setQuery} />
         <NumResults movies={movies} />
       </Navbar>
       <Main>
@@ -152,9 +189,7 @@ function Logo() {
     </div>
   );
 }
-function Search() {
-  const [query, setQuery] = useState("");
-
+function Search({ query, setQuery }) {
   return (
     <input
       className="search"
