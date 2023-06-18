@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { logDOM } from "@testing-library/react";
 
 const tempMovieData = [
   {
@@ -51,15 +50,9 @@ const tempWatchedData = [
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-const KEY = "e2af78d3";
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
-
-  fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=interstellar`)
-    .then((res) => res.json())
-    .then((data) => console.log(data)); // Don't set here!! This is side-effect and causes inf loop
-
   return (
     <>
       <Navbar>
