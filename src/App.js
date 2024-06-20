@@ -80,7 +80,7 @@ export default function App() {
   console.log("During render");
 */
   function handleSelectMovie(id) {
-    setSelectedId((selectedId) => (id === selectedId ? null : id));
+    setSelectedId((prevId) => (id === prevId ? null : id));
   }
 
   function handleCloseMovie() {
