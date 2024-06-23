@@ -57,9 +57,8 @@ export default function App() {
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [query, setQuery] = useState("interstellar");
+  const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
-  const tempQuery = "oblivion";
   /*
 
   useEffect(function () {
@@ -137,10 +136,11 @@ export default function App() {
       }*/
       if (query.length < 3) {
         setMovies([]);
-        setError("Please type movie");
+        setError("");
         return;
       }
 
+      handleCloseMovie();
       fetchMovies();
 
       return function () {
@@ -172,6 +172,7 @@ export default function App() {
               onCloseMovie={handleCloseMovie}
               onAddWatched={handleAddWatched}
               watched={watched}
+                //key={selectedId}
             />
           ) : (
             <>
@@ -320,6 +321,21 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     onCloseMovie();
   }
 
+  useEffect(function () {
+    function callback(e) {
+      if (e.code === "Escape") {
+        onCloseMovie();
+        console.log("Escape key pressed")
+      }
+    }
+
+    document.addEventListener("keydown", callback);
+
+    return function () {
+      document.removeEventListener("keydown", callback);
+    }
+  }, [onCloseMovie]);
+
   useEffect(
     function () {
       async function getMovieDetails() {
@@ -345,7 +361,7 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
 
       return function f() {
         document.title = "usePopcorn";
-        console.log(`Clean up effect for movie ${title}`);
+        console.log(`Clean up effect for movie ${title}`); // Remembers title via closure
       };
     },
     [title]
