@@ -35,7 +35,9 @@ export default function StarRating({
 
   function handleRating(rating) {
     setRating(rating); // internal state
-    onSetRating(rating); // external state
+    //if (onSetRating) onSetRating(rating); // external state (short-circuit)
+    //onSetRating && onSetRating(rating); // external state (short-circuit)
+    onSetRating?.(rating); // external state (optional chaining)
   }
 
   const textStyle = {

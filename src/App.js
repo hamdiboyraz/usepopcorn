@@ -120,6 +120,7 @@ export default function App() {
           setError("");
           console.log(data.Search);
         } catch (err) {
+          console.log(err.name);
           console.log(err.message);
           if (err.name !== "AbortError") {
             setError(err.message);
