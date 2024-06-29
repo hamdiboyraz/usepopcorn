@@ -7,12 +7,16 @@ const average = (arr) =>
 const KEY = "e2af78d3";
 export default function App() {
   const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
 
+  // const [watched, setWatched] = useState([]);
+  const [watched, setWatched] = useState(function () {
+    const storedValue = localStorage.getItem("watched")
+    return storedValue ? JSON.parse(storedValue) : []; // By using this avoid unnecessary parsing
+  });
   function handleSelectMovie(id) {
     setSelectedId((prevId) => (id === prevId ? null : id));
   }
@@ -23,11 +27,16 @@ export default function App() {
 
   function handleAddWatched(movie) {
     setWatched((watched) => [...watched, movie]);
+    //localStorage.setItem("watched", JSON.stringify([...watched, movie]));
   }
 
   function handleDeleteWatched(id) {
     setWatched((watched) => watched.filter((movie) => movie.imdbId !== id));
   }
+
+  useEffect(function () {
+    localStorage.setItem("watched", JSON.stringify(watched));
+  }, [watched])
 
   // console.log("render");
   useEffect(
@@ -52,7 +61,7 @@ export default function App() {
 
           setMovies(data.Search);
           setError("");
-          console.log(data.Search);
+          //console.log(data.Search);
         } catch (err) {
           console.log(err.name);
           console.log(err.message);
@@ -290,7 +299,7 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     [selectedId]
   );
 
-  console.log(title);
+  //console.log(title);
   useEffect(
     function () {
       if (!title) return;
