@@ -24,7 +24,6 @@ export default function App() {
 
   function handleAddWatched(movie) {
     setWatched((watched) => [...watched, movie]);
-    //localStorage.setItem("watched", JSON.stringify([...watched, movie]));
   }
 
   function handleDeleteWatched(id) {
@@ -119,22 +118,6 @@ function Search({ query, setQuery }) {
     inputEl.current.focus();
     setQuery("");
   });
-
-  useEffect(function () {
-    function callback(e) {
-      if (document.activeElement === inputEl.current) return;
-      if (e.code === "Enter") {
-        inputEl.current.focus();
-        setQuery("");
-      }
-    }
-
-    document.addEventListener("keydown", callback);
-
-    return () => {
-      document.removeEventListener("keydown", callback);
-    }
-  }, [setQuery]);
 
   return (
     <input
